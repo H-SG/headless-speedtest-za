@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "headless-speedtest-za"
+version = "0.1.0"
+description = ""
+authors = ["H-SG"]
+readme = "README.md"
+packages = [{include = "headless_speedtest_za"}]
+
+[tool.poetry.dependencies]
+python = "~3.10"
+selenium = "^4.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
