@@ -7,24 +7,27 @@ import time
 from datetime import datetime as dt
 import logging
 import random
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
+import platform
 
 # some general params
 ROOT_PATH = Path.cwd()
 GECKO_DRIVER_PATH = ROOT_PATH / 'geckodriver'
 PAGE_LOAD_DELAY = 5
-SAVE_SCREENSHOT = False
+SAVE_SCREENSHOT = False # enable to save a screenshot of the completed test
 SCREENSHOT_PATH = ROOT_PATH / 'last_test.png'
 
 # scoring parameters
-MAX_PING = 10
-MIN_DOWNLOAD = 400 # set this to about 80% of your specified download
-MIN_UPLOAD = 400 # set this to about 80% of your specified upload
+MAX_PING = 10 # ms - 10 is a reasonable number for fibre
+MIN_DOWNLOAD = 400 # mbps - set this to about 80% of your specified download
+MIN_UPLOAD = 400 # mbps - set this to about 80% of your specified upload
 SCORE_CHANCE = 0.5 # assuming above thresholds are met, what is the chance of actually scoring
 
 # influx db parameters
 INFLUX_TOKEN = None
-INFLUX_ORG = "home"
-INFLUX_BUCKET = "speedtest-za"
+INFLUX_ORG = None
+INFLUX_BUCKET = None
 INFLUX_URL = None
 
 # plaintext parameters
@@ -127,12 +130,21 @@ if __name__ == '__main__':
 
         # write our results out with a timestamp
         if CSV_RESULTS_PATH is not None:
+            logging.info("Writing results to CSV")
             with open(CSV_RESULTS_PATH, 'a') as rf:
                 rf.write(f"{dt.now().isoformat()},{results[ping_result_id]},{results[download_result_id]},{results[upload_result_id]}\n")
 
         # write our results to influxDB
         if INFLUX_URL is not None:
-            ...
+            logging.info("Writing results to influxDB")
+            with InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG) as client:
+                write_api = client.write_api(write_options=SYNCHRONOUS)
+
+                data = [f"speedtest,host={platform.node()} ping_ms={results[ping_result_id]}",
+                        f"speedtest,host={platform.node()} download_mbps={results[download_result_id]}",
+                        f"speedtest,host={platform.node()} upload_mbps={results[upload_result_id]}"]
+
+                write_api.write(INFLUX_BUCKET, INFLUX_ORG, data)
 
         # save screenshot of last speedtest
         if SAVE_SCREENSHOT:
