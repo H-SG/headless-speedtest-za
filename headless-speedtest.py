@@ -7,7 +7,7 @@ import time
 from datetime import datetime as dt
 import logging
 import random
-from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 import platform
 
