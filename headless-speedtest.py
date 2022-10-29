@@ -19,9 +19,9 @@ SAVE_SCREENSHOT = False # enable to save a screenshot of the completed test
 SCREENSHOT_PATH = ROOT_PATH / 'last_test.png'
 
 # scoring parameters
-MAX_PING = 10 # ms - 10 is a reasonable number for fibre
-MIN_DOWNLOAD = 400 # mbps - set this to about 80% of your specified download
-MIN_UPLOAD = 400 # mbps - set this to about 80% of your specified upload
+MAX_PING = 100 # ms - 10 is a reasonable number for fibre
+MIN_DOWNLOAD = 0 # mbps - set this to about 80% of your specified download
+MIN_UPLOAD = 0 # mbps - set this to about 80% of your specified upload
 SCORE_CHANCE = 0.5 # assuming above thresholds are met, what is the chance of actually scoring
 
 # influx db parameters
