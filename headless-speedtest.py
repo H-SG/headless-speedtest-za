@@ -1,3 +1,4 @@
+#!/home/zander/pydev/github/headless-speedtest-za/.venv/bin/python
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -119,7 +120,7 @@ if __name__ == '__main__':
             score_test = False
             logging.warning("Upload results below threshold")
 
-        if not random.choices([True, False], [SCORE_CHANCE, 1 - SCORE_CHANCE]):
+        if random.random() > SCORE_CHANCE:
             score_test = False
 
         if score_test:
