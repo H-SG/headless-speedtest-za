@@ -15,6 +15,7 @@ Only requirements are selenium, Firefox, and the Firefox webdriver, Gecko.
 - If using pip, create your enviroment
     - `pip install selenium influxdb-client`
 - `sudo apt install firefox`
+    - The snap version of firefox is not currently working, will be testing a potential workaround soonish
 - wget the latest gecko driver here https://github.com/mozilla/geckodriver/releases
     - `tar -xzvf geckodriver-<release>.tar.gz`
 
