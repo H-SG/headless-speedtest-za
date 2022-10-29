@@ -9,7 +9,11 @@ There are also configurable thresholds and a probability which controls whether 
 > www.speedtest.co.za will likely not enjoy abuse of this script
 
 Only requirements are selenium, Firefox, and the Firefox webdriver, Gecko.
-- `pip/poetry install selenium`
+- If using poetry
+    - `poetry shell`
+    - `poetry install`
+- If using pip, create your enviroment
+    - `pip install selenium influxdb-client`
 - `sudo apt install firefox`
 - wget the latest gecko driver here https://github.com/mozilla/geckodriver/releases
     - `tar -xzvf geckodriver-<release>.tar.gz`
@@ -26,3 +30,6 @@ There are three core parameters to the script which describes how the speedtest 
 - `test_completion_element` - what element (as identified by the ID parameter) on the page becomes visible once the test is complete
 
 While this is somewhat general, the code is made specifically for www.speedtest.co.za as of 2022/10/29.
+
+## Example cron setup
+TBD
