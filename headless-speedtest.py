@@ -132,7 +132,7 @@ if __name__ == '__main__':
         if CSV_RESULTS_PATH is not None:
             logging.info("Writing results to CSV")
             with open(CSV_RESULTS_PATH, 'a') as rf:
-                rf.write(f"{dt.now().isoformat()},{results[ping_result_id]},{results[download_result_id]},{results[upload_result_id]}\n")
+                rf.write(f"{dt.now().isoformat()},{results[ping_result_id]},{results[download_result_id]},{results[upload_result_id]},{score_test}\n")
 
         # write our results to influxDB
         if INFLUX_URL is not None:
@@ -142,7 +142,8 @@ if __name__ == '__main__':
 
                 data = [f"speedtest,host={platform.node()} ping_ms={results[ping_result_id]}",
                         f"speedtest,host={platform.node()} download_mbps={results[download_result_id]}",
-                        f"speedtest,host={platform.node()} upload_mbps={results[upload_result_id]}"]
+                        f"speedtest,host={platform.node()} upload_mbps={results[upload_result_id]}",
+                        f"speedtest,host={platform.node()} test_scored={score_test}"]
 
                 write_api.write(INFLUX_BUCKET, INFLUX_ORG, data)
 
