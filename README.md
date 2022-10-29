@@ -5,7 +5,7 @@ By default the script writes ping, upload, and download speeds to a csv file, bu
 
 There are also configurable thresholds and a probability which controls whether or not the speedtest is scored. Results will either be scored 5/5 or not at all depending on the thresholds and chance.
 
-> **⚠ Warning**
+> **Warning**
 > www.speedtest.co.za will likely not enjoy abuse of this script
 
 Only requirements are selenium, Firefox, and the Firefox webdriver, Gecko.
