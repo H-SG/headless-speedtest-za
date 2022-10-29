@@ -9,6 +9,7 @@ packages = [{include = "headless_speedtest_za"}]
 [tool.poetry.dependencies]
 python = "~3.10"
 selenium = "^4.5.0"
+influxdb-client = "^1.34.0"
 
 
 [build-system]
