@@ -10,7 +10,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y --no-install-recommends --no-install-suggests ca-certificates
 RUN update-ca-certificates
-RUN apt-get install -y --no-install-recommends --no-install-suggests curl bzip2 cron rsyslog
+RUN apt-get install -y --no-install-recommends --no-install-suggests curl bzip2 rsyslog
 RUN apt-get install -y --no-install-recommends --no-install-suggests firefox-esr
 
 # install python packages
@@ -27,7 +27,4 @@ RUN chmod +x geckodriver
 COPY headless-speedtest.py headless-speedtest.py
 COPY config.toml config.toml
 
-# setup cronjob for test
-RUN crontab -l | { cat; echo "*/42 * * * * python /app/headless_speedtest.py"; } | crontab -
-
-CMD cron && top
+ENTRYPOINT [ "python", "headless-speedtest.py", "-r", "30"]
