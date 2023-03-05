@@ -1,4 +1,3 @@
-#!/home/zander/pydev/github/headless-speedtest-za/.venv/bin/python
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -43,7 +42,7 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 def run_speedtest(speedtest_url: str, 
                   start_element: str, 
                   test_completion_element: str,
-                  timeout=60) -> Firefox:
+                  timeout=120) -> Firefox:
     # setup the webdriver
     options = Options()
     options.headless = True
@@ -60,7 +59,11 @@ def run_speedtest(speedtest_url: str,
 
     # getting key elements
     start_button = driver.find_element(By.ID, start_element)
-    test_complete_element = driver.find_element(By.ID, test_completion_element) 
+    test_complete_element = driver.find_element(By.ID, test_completion_element)
+
+    # modifications to testing defaults
+    driver.execute_script("speedtest.configuration.downloadTime = 30")
+    driver.execute_script("speedtest.configuration.uploadTime = 30")
     
     # start the test
     logging.info("Starting speedtest")
