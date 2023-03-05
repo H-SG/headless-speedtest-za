@@ -1,0 +1,41 @@
+[files]
+    custom_root = false
+    geckodriver_name = "geckodriver"
+
+[test_load]
+    page_load_delay = 5
+    save_test_screenshot = false
+    screenshot_name = "last_test.png"
+
+[test_scoring]
+    max_ping = 100
+    min_download = 400
+    min_upload = 400
+
+[test_run]
+    test_url = "http://speedtest.co.za/"
+    test_trigger = "start-btn"
+    score = true
+    score_trigger = "starRating"
+    specify_server = true
+    server = "cpt"
+    download_result = "download-result"
+    upload_result = "upload-result"
+    ping_result = "ping-result"
+
+
+[influx_db]
+    save_influx = false
+    influx_token = ""
+    influx_org = ""
+    influx_bucket = ""
+    influx_url = ""
+
+[csv_results]
+    save_csv = true
+    csv_name = "headless-speedtest-results.csv"
+
+[logging]
+    log_name = "headless-speedtest.log"
+    log_level = "debug"
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
