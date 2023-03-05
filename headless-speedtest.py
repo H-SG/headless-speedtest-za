@@ -31,7 +31,6 @@ def run_speedtest(
     options = Options()
     options.add_argument('-headless')
     service = Service(config["files"]["geckodriver_name"])
-    #service = Service('/usr/local/bin/geckodriver')
     driver = Firefox(options=options, service=service)
 
     # get the page
@@ -103,45 +102,7 @@ def load_config(args: argparse.Namespace) -> dict:
 
     return config
 
-
-if __name__ == "__main__":
-    # parse non-default config and check if valid file
-    DEFAULT_CONFIG_PATH: Path = Path.cwd() / "config.toml"
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Run speedtest on headless server"
-    )
-    parser.add_argument(
-        "-c",
-        "--configpath",
-        default=DEFAULT_CONFIG_PATH,
-        help="Specify alternative config location",
-        dest="CONFIG_PATH",
-    )
-    args: argparse.Namespace = parser.parse_args()
-
-    # load parsed config
-    config: dict = load_config(args)
-
-    # configure file logger
-    fl: logging.FileHandler = logging.FileHandler(config["logging"]["log_name"])
-    match (config["logging"]["log_level"]):
-        # TODO: put in cases for other log levels
-        case "debug" | "DEBUG":
-            fl.setLevel(logging.DEBUG)
-        case _:
-            fl.setLevel(logging.INFO)
-    fl.setFormatter(logging.Formatter(config["logging"]["log_format"]))
-    logger.addHandler(fl)
-
-    logger.debug("Config loaded and logger configured")
-    logger.info("Starting headless speedtest")
-
-    # this config is specific to speedtest.co.za
-    speedtest_url = config["test_run"]["test_url"]
-    start_element_id = config["test_run"]["test_trigger"]
-    test_completion_element_id = config["test_run"]["score_trigger"]
-
-    # run the test and return the completed test instance
+def main(config: dict) -> None:
     try:
         driver = run_speedtest(
             speedtest_url, start_element_id, test_completion_element_id, config
@@ -229,6 +190,66 @@ if __name__ == "__main__":
 
             # close the webdriver instance
             driver.close()
-            logger.info("Headless speedtest script complete")
+            logger.info("Speedtest complete.")
         else:
             logger.error("An error occurred while running the speedtest.")
+
+
+if __name__ == "__main__":
+    # parse non-default config and check if valid file
+    DEFAULT_CONFIG_PATH: Path = Path.cwd() / "config.toml"
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
+        description="Run speedtest on headless server"
+    )
+    parser.add_argument(
+        "-c",
+        "--configpath",
+        default=DEFAULT_CONFIG_PATH,
+        help="Specify alternative config location",
+        dest="CONFIG_PATH",
+    )
+
+    parser.add_argument(
+        "-r",
+        "--repeat-time",
+        default=0,
+        help="Specify time in minutes between test repeats",
+        dest="repeat_time",
+        type=float
+    )
+    args: argparse.Namespace = parser.parse_args()
+
+    # load parsed config
+    config: dict = load_config(args)
+
+    # configure file logger
+    fl: logging.FileHandler = logging.FileHandler(config["logging"]["log_name"])
+    match (config["logging"]["log_level"]):
+        # TODO: put in cases for other log levels
+        case "debug" | "DEBUG":
+            fl.setLevel(logging.DEBUG)
+        case _:
+            fl.setLevel(logging.INFO)
+    fl.setFormatter(logging.Formatter(config["logging"]["log_format"]))
+    logger.addHandler(fl)
+
+    logger.debug("Config loaded and logger configured")
+    logger.info("Starting headless speedtest")
+
+    # this config is specific to speedtest.co.za
+    speedtest_url = config["test_run"]["test_url"]
+    start_element_id = config["test_run"]["test_trigger"]
+    test_completion_element_id = config["test_run"]["score_trigger"]
+
+    # run the test and return the completed test instance
+    if args.repeat_time == 0:
+        main(config)
+    else:
+        logger.info(f"Starting recurring testing at {args.repeat_time} minute intervals.")
+        while True:
+            main(config)
+            logger.info(f"Sleeping for {args.repeat_time} minutes...")
+            time.sleep(args.repeat_time * 60)
+
+    logger.info("Headless speedtest script complete.")
+    
