@@ -27,4 +27,4 @@ RUN chmod +x geckodriver
 COPY headless-speedtest.py headless-speedtest.py
 COPY config.toml config.toml
 
-ENTRYPOINT [ "python", "headless-speedtest.py", "-r", "30"]
+ENTRYPOINT [ "python", "headless-speedtest.py"]
