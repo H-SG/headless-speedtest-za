@@ -1,9 +1,10 @@
 version: "3.6"
 
 services:
+  # duplicate speedtest for however many testing instances you want and change the requistie sub-params
   speedtest:
-    container_name: docker-speedtest-01 # increment these for additional instances
     image: headless-speedtest-za
+    # compose is bad at rebuilding the image if upstream changes occur, so delete any contianers as needed
     build: https://raw.githubusercontent.com/H-SG/headless-speedtest-za/main/Dockerfile
     environment:
         # do we want to repeat the test
@@ -14,6 +15,5 @@ services:
       - REPEAT_TEST_ALIGNMENT_TIME=5
     network_mode: host
     restart: on-failure
-    volumes: # remember to update these to match container name
-      - ~/docker-data/docker-speedtest-01/data:/app/data:rw
-      - ~/docker-data/docker-speedtest-01/config:/app/config:rw
+    volumes: # remember to update these to be unique per speedtest service instance
+      - ~/docker-data/speedtest-01/data:/app/data:rw

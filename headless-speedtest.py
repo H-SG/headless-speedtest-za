@@ -181,7 +181,6 @@ def main(config: dict) -> None:
 
 if __name__ == "__main__":
     # parse non-default config and check if valid file
-    print(os.listdir('/app/config'))
     DEFAULT_CONFIG_PATH: Path = Path("/app/config/config.toml")
 
     # load parsed config
