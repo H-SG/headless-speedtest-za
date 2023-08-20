@@ -24,6 +24,6 @@ RUN tar -xzf /tmp/geckodriver.tar.gz -C /app
 RUN chmod +x geckodriver
 
 # copy our script
-RUN git clone git@github.com:H-SG/headless-speedtest-za.git /app
+RUN git clone https://github.com/H-SG/headless-speedtest-za.git /app
 
 ENTRYPOINT [ "python", "headless-speedtest.py"]
