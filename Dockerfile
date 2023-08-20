@@ -25,6 +25,7 @@ RUN tar -xzf /tmp/geckodriver.tar.gz -C /app
 RUN chmod +x geckodriver
 
 # copy our script
+ADD "https://api.github.com/repos/H-SG/headless-speedtest-za/commits?per_page=1" latest_commit
 RUN git clone https://github.com/H-SG/headless-speedtest-za.git /app/repo
 RUN mv /app/repo/* /app
 
