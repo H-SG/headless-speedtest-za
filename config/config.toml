@@ -1,11 +1,10 @@
 [files]
-    custom_root = false
-    geckodriver_name = "geckodriver"
+    geckodriver_name = "/app/geckodriver"
 
 [test_load]
     page_load_delay = 5
     save_test_screenshot = false
-    screenshot_name = "last_test.png"
+    screenshot_name = "/app/data/last_test.png"
 
 [test_scoring]
     max_ping = 100
@@ -22,7 +21,11 @@
     download_result = "download-result"
     upload_result = "upload-result"
     ping_result = "ping-result"
-
+    test_repeat = 1
+    # in minutes
+    repeat_test_interval = 30
+    # which minute of the hour to start the repeat cycle on
+    repeat_test_time_align = 5 
 
 [influx_db]
     save_influx = false
@@ -33,9 +36,9 @@
 
 [csv_results]
     save_csv = true
-    csv_name = "headless-speedtest-results.csv"
+    csv_name = "/app/data/headless-speedtest-results.csv"
 
 [logging]
-    log_name = "headless-speedtest.log"
+    log_name = "/app/data/headless-speedtest.log"
     log_level = "debug"
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

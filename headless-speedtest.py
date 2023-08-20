@@ -1,3 +1,5 @@
+import os
+import datetime
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -63,13 +65,8 @@ def run_speedtest(
     return driver
 
 
-def load_config(args: argparse.Namespace) -> dict:
+def load_config(config_path: Path) -> dict:
     # check if the config file exists
-    config_path: Path
-    if isinstance(args.CONFIG_PATH, Path):
-        config_path = args.CONFIG_PATH
-    else:
-        config_path = Path(args.CONFIG_PATH)
     if not config_path.is_file():
         raise FileNotFoundError(f"The specified config path '{config_path}' is invalid")
 
@@ -77,23 +74,10 @@ def load_config(args: argparse.Namespace) -> dict:
     with open(config_path, "rb") as f:
         config: dict = tomllib.load(f)
 
-    # setup paths in config
-    root_path: Path
-    if config["files"]["custom_root"]:
-        root_path = Path(config["files"]["custom_root"])
-        if not root_path.is_dir():
-            raise FileNotFoundError(f"The specifid root path '{root_path}' is invalid.")
-    else:
-        root_path = Path.cwd()
-
-    config["files"]["geckodriver_name"] = (
-        root_path / config["files"]["geckodriver_name"]
-    )
-    config["test_load"]["screenshot_name"] = (
-        root_path / config["test_load"]["screenshot_name"]
-    )
-    config["csv_results"]["csv_name"] = root_path / config["csv_results"]["csv_name"]
-    config["logging"]["log_name"] = root_path / config["logging"]["log_name"]
+    config["files"]["geckodriver_name"] = Path(config["files"]["geckodriver_name"])
+    config["test_load"]["screenshot_name"] = Path(config["test_load"]["screenshot_name"])
+    config["csv_results"]["csv_name"] = Path(config["csv_results"]["csv_name"])
+    config["logging"]["log_name"] = Path(config["logging"]["log_name"])
 
     if not config["files"]["geckodriver_name"].is_file():
         raise FileNotFoundError(
@@ -197,30 +181,10 @@ def main(config: dict) -> None:
 
 if __name__ == "__main__":
     # parse non-default config and check if valid file
-    DEFAULT_CONFIG_PATH: Path = Path.cwd() / "config.toml"
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Run speedtest on headless server"
-    )
-    parser.add_argument(
-        "-c",
-        "--configpath",
-        default=DEFAULT_CONFIG_PATH,
-        help="Specify alternative config location",
-        dest="CONFIG_PATH",
-    )
-
-    parser.add_argument(
-        "-r",
-        "--repeat-time",
-        default=0,
-        help="Specify time in minutes between test repeats",
-        dest="repeat_time",
-        type=float
-    )
-    args: argparse.Namespace = parser.parse_args()
+    DEFAULT_CONFIG_PATH: Path = "/app/config/config.toml"
 
     # load parsed config
-    config: dict = load_config(args)
+    config: dict = load_config(DEFAULT_CONFIG_PATH)
 
     # configure file logger
     fl: logging.FileHandler = logging.FileHandler(config["logging"]["log_name"])
@@ -241,15 +205,32 @@ if __name__ == "__main__":
     start_element_id = config["test_run"]["test_trigger"]
     test_completion_element_id = config["test_run"]["score_trigger"]
 
+    # get repeat properties
+    test_repeat = bool(os.getenv("TEST_REPEAT", config["test_run"]["test_repeat"]))
+    repeat_test_interval = float(os.getenv("REPEAT_TEST_INTERVAL", config["test_run"]["repeat_test_interval"]))
+    repeat_test_time_align = int(os.getenv("REPEAT_TEST_ALIGNMENT_TIME", config["test_run"]["repeat_test_time_align"]))
+
     # run the test and return the completed test instance
-    if args.repeat_time == 0:
+    if not test_repeat:
         main(config)
     else:
-        logger.info(f"Starting recurring testing at {args.repeat_time} minute intervals.")
+        logger.info(f"Starting recurring testing at {repeat_test_interval} minute intervals, starting at the next {repeat_test_time_align} minute of the hour")
+        current_time = datetime.datetime.now()
+        minute_delta = repeat_test_time_align - current_time.minute
+        if minute_delta < 0:
+            time.sleep((60 + minute_delta) * 60)
+        else:
+            time.sleep(minute_delta * 60)
+        next_test_time = datetime.datetime.now()
         while True:
-            main(config)
-            logger.info(f"Sleeping for {args.repeat_time} minutes...")
-            time.sleep(args.repeat_time * 60)
+            current_time = datetime.datetime.now()
+            if current_time >= next_test_time:
+                next_test_time = current_time  + datetime.timedelta(minutes=repeat_test_interval)
+                main(config)
+                logger.info(f"Sleeping until next test...")
+
+            # 1 minute sleep to stop this loop from chowing resources
+            time.sleep(60)
 
     logger.info("Headless speedtest script complete.")
     

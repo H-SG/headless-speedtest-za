@@ -1,0 +1,19 @@
+version: "3.6"
+
+services:
+  speedtest:
+    container_name: docker-speedtest-01 # increment these for additional instances
+    image: headless-speedtest-za
+    build: https://raw.githubusercontent.com/H-SG/headless-speedtest-za/main/Dockerfile
+    environment:
+        # do we want to repeat the test
+      - TEST_REPEAT=1
+        # how often in minutes to repeat the speed test
+      - REPEAT_TEST_INTERVAL=30
+        # which minute of the hour to start the test interval, usefull for staggering multiple instances
+      - REPEAT_TEST_ALIGNMENT_TIME=5
+    network_mode: host
+    restart: on-failure
+    volumes: # remember to update these to match container name
+      - ~/docker-data/docker-speedtest-01/data:/app/data:rw
+      - ~/docker-data/docker-speedtest-01/config:/app/config:rw
