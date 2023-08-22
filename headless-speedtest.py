@@ -225,7 +225,7 @@ if __name__ == "__main__":
         while True:
             current_time = datetime.datetime.now()
             if current_time >= next_test_time:
-                next_test_time = current_time  + datetime.timedelta(minutes=repeat_test_interval)
+                next_test_time += datetime.timedelta(minutes=repeat_test_interval)
                 main(config)
                 logger.info(f"Sleeping until next test...")
 

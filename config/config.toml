@@ -3,13 +3,13 @@
 
 [test_load]
     page_load_delay = 5
-    save_test_screenshot = false
+    save_test_screenshot = true
     screenshot_name = "/app/data/last_test.png"
 
 [test_scoring]
     max_ping = 100
-    min_download = 400
-    min_upload = 400
+    min_download = 50
+    min_upload = 50
 
 [test_run]
     test_url = "http://speedtest.co.za/"
