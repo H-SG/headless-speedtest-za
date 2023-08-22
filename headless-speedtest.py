@@ -132,9 +132,12 @@ def main(config: dict) -> None:
                     scoring_parent = driver.find_element(
                         By.ID, test_completion_element_id
                     )
-                    # TODO: refactor out "fa" into config
-                    stars = scoring_parent.find_elements(By.CLASS_NAME, "fa")
-                    stars[-1].click()
+                    # TODO: refactor out into config
+                    stars = scoring_parent.find_elements(By.XPATH, "//*[contains(@class, 'star')]")
+                    try:
+                        stars[-1].click()
+                    except IndexError:
+                        logger.warning("Could not find star to rate, site might be modified!")
 
             # write our results out with a timestamp
             if config["csv_results"]["save_csv"]:
